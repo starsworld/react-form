@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import FormContext from './context';
 import renderComponent from './renderComponent';
-import createForm from './createForm';
+import createForm from '../createForm';
 
 const all = [
     'active',
@@ -29,7 +29,8 @@ const all = [
 
 function Form({
     validateOnBlur,
-    subscription = all
+    subscription = all,
+    ...rest
 }) {
     const config = {
         validateOnBlur
@@ -57,6 +58,7 @@ function Form({
         {value: form},
         renderComponent(
             {
+                ...rest,
                 ...renderProps
             },
             'ReactForm'

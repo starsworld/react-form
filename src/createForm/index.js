@@ -1,4 +1,14 @@
+import memoize from "./memoize";
+import filterFieldState from './filterFieldState'
+import filterFormState from './filterFormState'
 
+function calculateNextFormState() {
+
+}
+
+function notifySubscriber() {
+
+}
 
 function createForm(config) {
     if (!config) {
@@ -50,6 +60,34 @@ function createForm(config) {
         },
         reset: () => {
 
+        },
+        subscribe: (subscriber, subscription) => {
+            if (!subscriber) {
+                throw new Error('No callback given.')
+            }
+
+            const memoized = memoize(subscriber);
+            const {subscribers, lastFormState} = state;
+            const index = subscribers.index++;
+            subscribers.entries[index] = {
+                subscriber: memoized,
+                subscription
+            };
+            const nextFormState = calculateNextFormState();
+            if (nextFormState !== lastFormState) {
+                state.lastFormState = nextFormState;
+            }
+            notifySubscriber(
+                memoized,
+                subscription,
+                nextFormState,
+                nextFormState,
+
+                true
+            );
+            return () => {
+                delete subscribers.entries[index]
+            }
         }
     };
 
